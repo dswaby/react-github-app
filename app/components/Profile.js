@@ -5,6 +5,7 @@ var Notes = require('./Notes/Notes');
 var UserProfile = require('./Github/UserProfile');
 var Firebase = require('firebase');
 var ReactFireMixin = require('reactfire');
+var helpers = require('../utils/helpers');
 
 var Profile = React.createClass({
  	mixins: [ReactFireMixin],
@@ -22,6 +23,14 @@ var Profile = React.createClass({
 		this.ref = new Firebase('https://githob.firebaseio.com/');
 		var childRef = this.ref.child(this.props.params.username);
 		this.bindAsArray(childRef, 'notes');
+
+		helpers.getGithubInfo(this.props.params.username)
+			.then(function(data){
+				this.setState({
+					bio: data.bio,
+					repos: data.repos
+				})
+			}.bind(this))
 	},
 	componentWillUnmount: function() {
 		this.unbind('notes');
