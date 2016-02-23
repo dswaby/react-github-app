@@ -18,19 +18,28 @@ var Profile = React.createClass({
 			repos:["repos1", "repo2"]
 		};
 	},
-	
-	componentDidMount: function() {
-		this.ref = new Firebase('https://githob.firebaseio.com/');
-		var childRef = this.ref.child(this.props.params.username);
+
+	init: function(username) {
+		var childRef = this.ref.child(username);
 		this.bindAsArray(childRef, 'notes');
 
-		helpers.getGithubInfo(this.props.params.username)
+		helpers.getGithubInfo(username)
 			.then(function(data){
 				this.setState({
 					bio: data.bio,
 					repos: data.repos
 				})
-			}.bind(this))
+			}.bind(this)
+		)
+	},
+ 	
+	componentDidMount: function() {
+		this.ref = new Firebase('https://githob.firebaseio.com/');
+		this.init(this.props.params.username);
+	},
+	componentWillReceiveProps: function(nextProps) {
+		this.unbind('notes');
+		this.init(nextProps.params.username)
 	},
 	componentWillUnmount: function() {
 		this.unbind('notes');
