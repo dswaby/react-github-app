@@ -1,13 +1,14 @@
-var React = require('react');
-var Router = require('react-router');
+import React from 'react'
+import { History } from 'react-router'
 
-var SearchGithub = React.createClass({
-  mixins: [Router.History],
+// not using classes since there is no support for mixins with ES6 classes
+const SearchGithub = React.createClass({
+  mixins: [History],
   getRef: function(ref){
     this.usernameRef = ref;
   },
   handleSubmit: function(){
-    var username = this.usernameRef.value;
+    const username = this.usernameRef.value;
     this.usernameRef.value = '';
     this.history.pushState(null, "/profile/" + username)
   },
@@ -16,7 +17,7 @@ var SearchGithub = React.createClass({
       <div className="col-sm-12">
         <form onSubmit={this.handleSubmit}>
           <div className="form-group col-sm-7">
-            <input type="text" className="form-control" ref={this.getRef} />
+            <input type="text" placeholder="Username" className="form-control" ref={this.getRef} />
           </div>
           <div className="form-group col-sm-5">
             <button type="submit" className="btn btn-block btn-primary">Search Github</button>
@@ -27,4 +28,4 @@ var SearchGithub = React.createClass({
   }
 })
 
-module.exports = SearchGithub;
+export default SearchGithub
