@@ -1,28 +1,28 @@
 import React from 'react'
-import Router from 'react-router'
 import Repos from './Github/Repos'
 import Notes from './Notes/Notes'
 import UserProfile from './Github/UserProfile'
-import Firebase from 'firebase'
-import ReactFireMixin from 'reactfire'
 import getGithubInfo from '../utils/helpers'
+import Rebase from 're-base'
 
+const base = Rebase.createClass('https://githob.firebaseio.com/')
 
-var Profile = React.createClass({
- 	mixins: [ReactFireMixin],
-	getInitialState: function() {
-		return {
-			notes: ["note1", "note2"],
-			bio: {
-				name: "Rando Name"
-			},
-			repos:["repos1", "repo2"]
-		};
-	},
-
-	init: function(username) {
-		var childRef = this.ref.child(username);
-		this.bindAsArray(childRef, 'notes');
+class Profile extends React.Component {
+	// use constructor to set state instead of getInitialState
+	constructor(props){
+		super(props)
+		this.state = {
+			notes: [],
+			bio: {},
+			repos:[]
+		}
+	}
+	init(username) {
+		this.ref = base.bindToState(username, {
+			context: this,
+			asArray: true,
+			state: 'notes'
+		});
 
 		getGithubInfo(username)
 			.then(function(data){
@@ -32,24 +32,23 @@ var Profile = React.createClass({
 				})
 			}.bind(this)
 		)
-	},
+	}
  	
-	componentDidMount: function() {
-		this.ref = new Firebase('https://githob.firebaseio.com/');
+	componentDidMount() {
 		this.init(this.props.params.username);
-	},
-	componentWillReceiveProps: function(nextProps) {
-		this.unbind('notes');
+	}
+	componentWillReceiveProps(nextProps) {
+		base.removeBinding(this.ref)
 		this.init(nextProps.params.username)
-	},
-	componentWillUnmount: function() {
-		this.unbind('notes');
-	},
-	handleAddNote: function(newNote) {
+	}
+	componentWillUnmount() {
+		base.removeBinding(this.ref)
+	}
+	handleAddNote(newNote) {
 		// add new note to firebase
 		this.ref.child(this.props.params.username).child(this.state.notes.length).set(newNote)
-	},
-	render: function() {
+	}
+	render() {
 		return (
 			<div className="row">
 		        <div className="col-md-4">
@@ -67,5 +66,6 @@ var Profile = React.createClass({
 		      </div>
 		);
 	}
-});
+}
+
 export default Profile
