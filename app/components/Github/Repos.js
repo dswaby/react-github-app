@@ -2,18 +2,20 @@ import React from 'react'
 
 class Repos extends React.Component {
 	render() {
-		var repos = this.props.repos.map(function(repo, i){
-			return <li className="list-group-item" key={i}>
-				{repo.html_url && <h4><a href={repo.html_url}>{repo.name}</a></h4>}
-				{repo.description && <p>{repo.description}</p>}
-			</li>
-		})
+		
 		
 		return (
 			<div className="Repos">
 				<h3>Repos</h3>
 				<ul className="list-group">
-					{repos}
+					{ this.props.repos.map((repo, i) => {
+						return (
+							<li className="list-group-item" key={i}>
+								{repo.html_url && <h4><a href={repo.html_url}>{repo.name}</a></h4>}
+								{repo.description && <p>{repo.description}</p>}
+							</li>
+						)
+					})}
 				</ul>
 			</div>
 		)
