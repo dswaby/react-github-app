@@ -1,7 +1,6 @@
 import React from 'react'
 
 const NotesList = ({notes}) => {
-	console.log(notes)
 	return (
 		<ul className="list-group">
 			{notes.map(function(note, index) {
