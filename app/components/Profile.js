@@ -18,11 +18,11 @@ class Profile extends React.Component {
 		}
 	}
 	init(username) {
-		this.ref = base.bindToState(username, {
+		this.ref = base.bindToState(this.props.params.username, {
 			context: this,
 			asArray: true,
 			state: 'notes'
-		});
+		})
 
 		getGithubInfo(username)
 			.then(function(data){
@@ -46,7 +46,9 @@ class Profile extends React.Component {
 	}
 	handleAddNote(newNote) {
 		// add new note to firebase
-		this.ref.child(this.props.params.username).child(this.state.notes.length).set(newNote)
+		base.post(this.props.params.username, {
+			data: this.state.notes.concat([newNote])
+		})
 	}
 	render() {
 		return (
@@ -61,7 +63,7 @@ class Profile extends React.Component {
 		         	<Notes 
 		         		username={this.props.params.username} 
 		         		notes={this.state.notes} 
-		         		addNote={this.handleAddNote} />
+		         		addNote={(newNote) => this.handleAddNote(newNote)}/>
 		        </div>
 		      </div>
 		);
